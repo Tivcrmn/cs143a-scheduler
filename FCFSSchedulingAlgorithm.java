@@ -57,6 +57,7 @@ public class FCFSSchedulingAlgorithm extends BaseSchedulingAlgorithm {
 		activeJob = null;
 		jobs = new ArrayList<Process>();
         log = true;
+        memManageType = "FIRST"; // default is first
 
 		// Initialize memory
 		/*------------------------------------------------------------*/
@@ -114,7 +115,7 @@ public class FCFSSchedulingAlgorithm extends BaseSchedulingAlgorithm {
 
         if (!setSuccess) {
             if (log) {
-                System.out.println("process " + p.getPID() + " is been igonred");
+                System.out.println("process " + p.getPID() + " has been igonred");
                 System.out.println("------------------------------------------");
             }
             p.setIgnore(true);
@@ -157,13 +158,9 @@ public class FCFSSchedulingAlgorithm extends BaseSchedulingAlgorithm {
 	 * available.
 	 */
 	public Process getNextJob(long currentTime) {
-		Process earliest = null;
 
-		if (!isJobFinished())
-			return activeJob;
-		if (jobs.size() > 0)
-			earliest = jobs.get(0);
-		activeJob = earliest;
+		if (jobs.isEmpty() || !isJobFinished()) return activeJob;
+		activeJob = jobs.get(0);
 		return activeJob;
 	}
 
