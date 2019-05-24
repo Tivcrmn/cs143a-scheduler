@@ -1,34 +1,35 @@
-/** FCFSSchedulingAlgorithm.java
- *
+/**
+ * FCFSSchedulingAlgorithm.java
+ * <p>
  * A first-come first-served scheduling algorithm.
  * The current implementation will work without memory management features
- *
  */
 package com.jimweller.cpuscheduler;
 
 import java.util.*;
 
 
-
 public class FCFSSchedulingAlgorithm extends BaseSchedulingAlgorithm {
 
-  	private ArrayList<Process> jobs;
+    private ArrayList<Process> jobs;
     private boolean log;
 
-	// Add data structures to support memory management
-	/*------------------------------------------------------------*/
+    // Add data structures to support memory management
+    /*------------------------------------------------------------*/
     public class MemInterval {
         long start;
         long end;
+
         MemInterval(long start, long end) {
             this.start = start;
             this.end = end;
         }
     }
+
     private String memManageType;
     private Map<Process, MemInterval> intervalMapping;
     private TreeSet<MemInterval> intervals;
-	/*------------------------------------------------------------*/
+    /*------------------------------------------------------------*/
 
     // Comparators
     /*------------------------------------------------------------*/
@@ -52,37 +53,38 @@ public class FCFSSchedulingAlgorithm extends BaseSchedulingAlgorithm {
     /*------------------------------------------------------------*/
 
 
-
-	FCFSSchedulingAlgorithm() {
-		activeJob = null;
-		jobs = new ArrayList<Process>();
+    FCFSSchedulingAlgorithm() {
+        activeJob = null;
+        jobs = new ArrayList<Process>();
         log = true;
         memManageType = "FIRST"; // default is first
 
-		// Initialize memory
-		/*------------------------------------------------------------*/
+        // Initialize memory
+        /*------------------------------------------------------------*/
         intervalMapping = new HashMap<>();
         intervals = new TreeSet<>(intervalComparator);
         addInterval(null, 380, 380, false);
-		/*------------------------------------------------------------*/
+        /*------------------------------------------------------------*/
 
-	}
+    }
 
     public void addInterval(Process p, long start, long end, boolean log) {
         MemInterval newInterval = new MemInterval(start, end);
         intervalMapping.put(p, newInterval);
         intervals.add(newInterval);
         if (log) {
-          System.out.println("add process id: " + p.getPID() + " allocated in : " + start + " " + end);
-          System.out.println("------------------------------------------");
+            System.out.println("add process id: " + p.getPID() + " allocated in : " + start + " " + end);
+            System.out.println("------------------------------------------");
         }
     }
 
-	/** Add the new job to the correct queue. */
-	public void addJob(Process p) {
+    /**
+     * Add the new job to the correct queue.
+     */
+    public void addJob(Process p) {
 
-	// Check if any memory is available
-	/*------------------------------------------------------------*/
+        // Check if any memory is available
+        /*------------------------------------------------------------*/
         long mem = p.getMemSize();
         long start = 0;
         long minStart = 0;
@@ -108,10 +110,10 @@ public class FCFSSchedulingAlgorithm extends BaseSchedulingAlgorithm {
         }
 
         if (memManageType.equals("BEST") && min != 381) {
-          addInterval(p, minStart, minStart + mem, log);
-          setSuccess = true;
+            addInterval(p, minStart, minStart + mem, log);
+            setSuccess = true;
         }
-  	/*------------------------------------------------------------*/
+        /*------------------------------------------------------------*/
 
         if (!setSuccess) {
             if (log) {
@@ -124,15 +126,17 @@ public class FCFSSchedulingAlgorithm extends BaseSchedulingAlgorithm {
 
         jobs.add(p);
         Collections.sort(jobs, comparator);
-	}
+    }
 
-	/** Returns true if the job was present and was removed. */
-	public boolean removeJob(Process p) {
-		if (p == activeJob)
-			activeJob = null;
+    /**
+     * Returns true if the job was present and was removed.
+     */
+    public boolean removeJob(Process p) {
+        if (p == activeJob)
+            activeJob = null;
 
-		// In case memory was allocated, free it
-		/*------------------------------------------------------------*/
+        // In case memory was allocated, free it
+        /*------------------------------------------------------------*/
         if (!intervalMapping.containsKey(p)) return false;
         if (log) {
             System.out.println("remove process id: " + p.getPID() + " mem size is : " + p.getMemSize());
@@ -140,36 +144,36 @@ public class FCFSSchedulingAlgorithm extends BaseSchedulingAlgorithm {
         }
         intervals.remove(intervalMapping.get(p));
         intervalMapping.remove(p);
-		/*------------------------------------------------------------*/
+        /*------------------------------------------------------------*/
 
-		return jobs.remove(p);
-	}
+        return jobs.remove(p);
+    }
 
-	/**
-	 * Transfer all the jobs in the queue of a SchedulingAlgorithm to another, such
-	 * as when switching to another algorithm in the GUI
-	 */
-	public void transferJobsTo(SchedulingAlgorithm otherAlg) {
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * Transfer all the jobs in the queue of a SchedulingAlgorithm to another, such
+     * as when switching to another algorithm in the GUI
+     */
+    public void transferJobsTo(SchedulingAlgorithm otherAlg) {
+        throw new UnsupportedOperationException();
+    }
 
-	/**
-	 * Returns the next process that should be run by the CPU, null if none
-	 * available.
-	 */
-	public Process getNextJob(long currentTime) {
+    /**
+     * Returns the next process that should be run by the CPU, null if none
+     * available.
+     */
+    public Process getNextJob(long currentTime) {
 
-		if (jobs.isEmpty() || !isJobFinished()) return activeJob;
-		activeJob = jobs.get(0);
-		return activeJob;
-	}
+        if (jobs.isEmpty() || !isJobFinished()) return activeJob;
+        activeJob = jobs.get(0);
+        return activeJob;
+    }
 
-	public String getName() {
-		return "First-Come First-Served";
-	}
+    public String getName() {
+        return "First-Come First-Served";
+    }
 
-	public void setMemoryManagment(String v) {
-		// Modify class to suppor memory management
+    public void setMemoryManagment(String v) {
+        // Modify class to suppor memory management
         memManageType = v;
-	}
+    }
 }

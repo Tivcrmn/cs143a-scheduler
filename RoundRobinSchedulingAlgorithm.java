@@ -1,10 +1,10 @@
-/** RoundRobinSchedulingAlgorithm.java
- *
+/**
+ * RoundRobinSchedulingAlgorithm.java
+ * <p>
  * A scheduling algorithm that randomly picks the next job to go.
  *
  * @author: Kyle Benson
  * Winter 2013
- *
  */
 package com.jimweller.cpuscheduler;
 
@@ -54,9 +54,8 @@ public class RoundRobinSchedulingAlgorithm extends BaseSchedulingAlgorithm {
     }
 
 
-
     /** Transfer all the jobs in the queue of a SchedulingAlgorithm to another, such as
-    when switching to another algorithm in the GUI */
+     when switching to another algorithm in the GUI */
     public void transferJobsTo(SchedulingAlgorithm otherAlg) {
         throw new UnsupportedOperationException();
     }

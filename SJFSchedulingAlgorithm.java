@@ -1,10 +1,10 @@
-/** SJFSchedulingAlgorithm.java
- *
+/**
+ * SJFSchedulingAlgorithm.java
+ * <p>
  * A shortest job first scheduling algorithm.
  *
  * @author: Charles Zhu
  * Spring 2016
- *
  */
 package com.jimweller.cpuscheduler;
 
@@ -15,7 +15,7 @@ public class SJFSchedulingAlgorithm extends BaseSchedulingAlgorithm implements O
     private boolean preemptive;
     private List<Process> jobs;
 
-    SJFSchedulingAlgorithm(){
+    SJFSchedulingAlgorithm() {
         // Fill in this method
         /*------------------------------------------------------------*/
         preemptive = false;
@@ -26,7 +26,7 @@ public class SJFSchedulingAlgorithm extends BaseSchedulingAlgorithm implements O
     // Comparators
     /*------------------------------------------------------------*/
     class SJFSComparatorPreemptive implements Comparator<Process> {
-        public int compare(Process p1, Process p2){
+        public int compare(Process p1, Process p2) {
             if (p1.getBurstTime() != p2.getBurstTime()) {
                 return p1.getBurstTime() > p2.getBurstTime() ? 1 : -1;
             } else {
@@ -36,7 +36,7 @@ public class SJFSchedulingAlgorithm extends BaseSchedulingAlgorithm implements O
     }
 
     class SJFSComparatorNotPreemptive implements Comparator<Process> {
-        public int compare(Process p1, Process p2){
+        public int compare(Process p1, Process p2) {
             if (p1.getInitBurstTime() != p2.getInitBurstTime()) {
                 return p1.getInitBurstTime() > p2.getInitBurstTime() ? 1 : -1;
             } else {
@@ -44,12 +44,13 @@ public class SJFSchedulingAlgorithm extends BaseSchedulingAlgorithm implements O
             }
         }
     }
+
     SJFSComparatorPreemptive sp = new SJFSComparatorPreemptive();
     SJFSComparatorNotPreemptive snp = new SJFSComparatorNotPreemptive();
     /*------------------------------------------------------------*/
 
     /** Add the new job to the correct queue.*/
-    public void addJob(Process p){
+    public void addJob(Process p) {
 
         // Fill in this method
         /*------------------------------------------------------------*/
@@ -58,12 +59,12 @@ public class SJFSchedulingAlgorithm extends BaseSchedulingAlgorithm implements O
     }
 
     /** Returns true if the job was present and was removed. */
-    public boolean removeJob(Process p){
+    public boolean removeJob(Process p) {
 
         // Fill in this method
         /*------------------------------------------------------------*/
         if (p == activeJob) {
-          // if p is the currentJob, make activeJob null
+            // if p is the currentJob, make activeJob null
             activeJob = null;
         }
         return jobs.remove(p);
@@ -71,13 +72,13 @@ public class SJFSchedulingAlgorithm extends BaseSchedulingAlgorithm implements O
     }
 
     /** Transfer all the jobs in the queue of a SchedulingAlgorithm to another, such as
-    when switching to another algorithm in the GUI */
+     when switching to another algorithm in the GUI */
     public void transferJobsTo(SchedulingAlgorithm otherAlg) {
         throw new UnsupportedOperationException();
     }
 
     /** Returns the next process that should be run by the CPU, null if none available.*/
-    public Process getNextJob(long currentTime){
+    public Process getNextJob(long currentTime) {
 
         // Fill in this method
         /*------------------------------------------------------------*/
@@ -97,14 +98,14 @@ public class SJFSchedulingAlgorithm extends BaseSchedulingAlgorithm implements O
         /*------------------------------------------------------------*/
     }
 
-    public String getName(){
+    public String getName() {
         return "Shortest Job First";
     }
 
     /**
      * @return Value of preemptive.
      */
-    public boolean isPreemptive(){
+    public boolean isPreemptive() {
 
         // Fill in this method
         /*------------------------------------------------------------*/
@@ -115,7 +116,7 @@ public class SJFSchedulingAlgorithm extends BaseSchedulingAlgorithm implements O
     /**
      * @param v  Value to assign to preemptive.
      */
-    public void setPreemptive(boolean  v){
+    public void setPreemptive(boolean v) {
 
         // Fill in this method
         /*------------------------------------------------------------*/
