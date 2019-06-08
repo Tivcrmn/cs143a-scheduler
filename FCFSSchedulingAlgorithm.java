@@ -55,7 +55,6 @@ public class FCFSSchedulingAlgorithm extends BaseSchedulingAlgorithm {
     FCFSSchedulingAlgorithm() {
         activeJob = null;
         jobs = new ArrayList<Process>();
-        memManageType = "FIRST"; // default is first
 
         // Initialize memory
         /*------------------------------------------------------------*/
@@ -79,39 +78,43 @@ public class FCFSSchedulingAlgorithm extends BaseSchedulingAlgorithm {
 
         // Check if any memory is available
         /*------------------------------------------------------------*/
-        long mem = p.getMemSize();
-        long start = 0;
-        long minStart = 0;
-        long min = 381;
         boolean setSuccess = false;
-        Iterator<MemInterval> iterator = intervals.iterator();
-        while (iterator.hasNext()) {
-            MemInterval interval = iterator.next();
-            long curChunkSize = interval.start - start;
-            if (curChunkSize >= mem) {
-                if (memManageType.equals("FIRST")) {
-                    addInterval(p, start, start + mem);
-                    setSuccess = true;
-                    break;
-                } else if (memManageType.equals("BEST")) {
-                    if (curChunkSize < min) {
-                        min = curChunkSize;
-                        minStart = start;
-                    }
-                }
-            }
-            start = interval.end;
-        }
+        if (memManageType != null) {
+          long mem = p.getMemSize();
+          long start = 0;
+          long minStart = 0;
+          long min = 381;
+          Iterator<MemInterval> iterator = intervals.iterator();
+          while (iterator.hasNext()) {
+              MemInterval interval = iterator.next();
+              long curChunkSize = interval.start - start;
+              if (curChunkSize >= mem) {
+                  if (memManageType.equals("FIRST")) {
+                      addInterval(p, start, start + mem);
+                      setSuccess = true;
+                      break;
+                  } else if (memManageType.equals("BEST")) {
+                      if (curChunkSize < min) {
+                          min = curChunkSize;
+                          minStart = start;
+                      }
+                  }
+              }
+              start = interval.end;
+          }
 
-        if (memManageType.equals("BEST") && min != 381) {
-            addInterval(p, minStart, minStart + mem);
-            setSuccess = true;
+          if (memManageType.equals("BEST") && min != 381) {
+              addInterval(p, minStart, minStart + mem);
+              setSuccess = true;
+          }
         }
         /*------------------------------------------------------------*/
 
-        if (!setSuccess) {
-            p.setIgnore(true);
-            return;
+        if (memManageType != null) {
+          if (!setSuccess) {
+              p.setIgnore(true);
+              return;
+          }
         }
 
         jobs.add(p);
@@ -127,9 +130,11 @@ public class FCFSSchedulingAlgorithm extends BaseSchedulingAlgorithm {
 
         // In case memory was allocated, free it
         /*------------------------------------------------------------*/
-        if (!intervalMapping.containsKey(p)) return false;
-        intervals.remove(intervalMapping.get(p));
-        intervalMapping.remove(p);
+        if (memManageType != null) {
+          if (!intervalMapping.containsKey(p)) return false;
+          intervals.remove(intervalMapping.get(p));
+          intervalMapping.remove(p);
+        }
         /*------------------------------------------------------------*/
 
         return jobs.remove(p);
